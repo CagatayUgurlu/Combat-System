@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    CameraController cameraController;
+
+    private void Awake()
+    {
+        cameraController = Camera.main.GetComponent<CameraController>();
+    }
+
     [SerializeField] float moveSpeed = 5f;
     private void Update()
     {
@@ -12,6 +19,8 @@ public class PlayerController : MonoBehaviour
 
         var moveInput = (new Vector3 (horizontal, 0, vertical)).normalized;
 
-        transform.position += moveInput * moveSpeed * Time.deltaTime;
+        var moveDir = cameraController.PlanarRotation * moveInput;
+
+        transform.position += moveDir * moveSpeed * Time.deltaTime;
     }
 }
