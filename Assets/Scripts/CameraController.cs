@@ -24,27 +24,34 @@ public class CameraController : MonoBehaviour
     float invertYVal;
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse1))
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            if (Input.GetKey(KeyCode.Mouse1))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
 
-            invertXVal = (invertX) ? -1 : 1;
-            invertYVal = (invertY) ? -1 : 1;
+                invertXVal = (invertX) ? -1 : 1;
+                invertYVal = (invertY) ? -1 : 1;
 
-            rotationX -= Input.GetAxis("Mouse Y") * invertYVal * rotationSpeed; 
-            rotationX = Mathf.Clamp(rotationX, minVerticalAngle, maxVerticalAngle);
-            rotationY += Input.GetAxis("Mouse X") * invertXVal * rotationSpeed;
+                rotationX -= Input.GetAxis("Mouse Y") * invertYVal * rotationSpeed;
+                rotationX = Mathf.Clamp(rotationX, minVerticalAngle, maxVerticalAngle);
+                rotationY += Input.GetAxis("Mouse X") * invertXVal * rotationSpeed;
+
+
+
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
 
             var targetRotation = Quaternion.Euler(rotationX, rotationY, 0);
             var focusPosition = followTarget.position + new Vector3(framingOffSet.x, framingOffSet.y);
 
-            transform.position = focusPosition - followTarget.position - targetRotation * new Vector3(0, 0, distance);
+            transform.position = focusPosition - targetRotation * new Vector3(0, 0, distance);
             transform.rotation = targetRotation;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-        }
 
+        }
     }
+    
+
 }
