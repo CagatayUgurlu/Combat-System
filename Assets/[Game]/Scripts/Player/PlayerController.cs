@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -22,16 +23,25 @@ public class PlayerController : MonoBehaviour
     CameraController cameraController;
     Animator animator;
     CharacterController characterController;
+    MeleeFighter meleeFighter;
 
     private void Awake()
     {
         cameraController = Camera.main.GetComponent<CameraController>();
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
+        meleeFighter = GetComponent<MeleeFighter>();
     }
 
     private void Update()
     {
+        if (meleeFighter.InAction)
+        {
+            animator.SetFloat("moveAmount", 0f);
+            return;
+        }
+           
+
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
