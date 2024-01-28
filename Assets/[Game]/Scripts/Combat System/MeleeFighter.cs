@@ -6,6 +6,7 @@ using UnityEngine;
 public enum AttackState { Idle, Windup, Impact, Cooldown }
 public class MeleeFighter : MonoBehaviour
 {
+    [SerializeField] List<AttackData> attacks;
     [SerializeField] GameObject sword;
     BoxCollider swordCollider;
 
@@ -26,6 +27,8 @@ public class MeleeFighter : MonoBehaviour
     }
 
     AttackState attackState;
+    bool doCombo;
+    int comboCount = 0;
     public bool InAction { get; private set; } = false;
     public void TryToAttack()
     {
@@ -33,16 +36,21 @@ public class MeleeFighter : MonoBehaviour
         {
             StartCoroutine(Attack());
         }
+        else if (attackState == AttackState.Impact || attackState == AttackState.Cooldown)
+        {
+            doCombo = true;
+        }
     }
     IEnumerator Attack()
     {
         InAction = true;
         attackState = AttackState.Windup;
 
-        float impactStartTime = 0.33f;
-        float impactEndTime = 0.55f;
+        //float impactStartTime = 0.33f;
+        //float impactEndTime = 0.55f;
 
-        animator.CrossFade("Slash", 0.2f);
+        //animator.CrossFade("Slash", 0.2f);
+        animator.CrossFade(attacks[comboCount].AnimName, 0.2f); 
         yield return null;
 
         var animState = animator.GetNextAnimatorStateInfo(1);
@@ -55,7 +63,8 @@ public class MeleeFighter : MonoBehaviour
 
             if(attackState == AttackState.Windup)
             {
-                if(normalizedTime >= impactStartTime)
+                //if(normalizedTime >= impactStartTime)
+                if(normalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
                     attackState = AttackState.Impact;
                     swordCollider.enabled = true; // Enable collider
@@ -63,7 +72,8 @@ public class MeleeFighter : MonoBehaviour
             }
             else if(attackState == AttackState.Impact)
             {
-                if(normalizedTime >= impactEndTime)
+                //if(normalizedTime >= impactEndTime)
+                if(normalizedTime >= attacks[comboCount].ImpactEndTime)
                 {
                     attackState = AttackState.Cooldown;
                     swordCollider.enabled = false; // Disable collider
@@ -71,13 +81,25 @@ public class MeleeFighter : MonoBehaviour
             }
             else if (attackState == AttackState.Cooldown)
             {
-                // TODO: Handle Combos
+                //Handle Combos
+                if (doCombo)
+                {
+                    doCombo = false;
+                    comboCount = (comboCount + 1) % attacks.Count;
+                    /*++comboCount;
+                    if (comboCount >= attacks.Count)
+                        comboCount = 0;
+                    */
+                    StartCoroutine(Attack());
+                    yield break;
+                }
             }
             yield return null;
         }
 
         //yield return new WaitForSeconds(animState.length);
         attackState = AttackState.Idle;
+        comboCount = 0;
         InAction = false;
     }
 
@@ -98,7 +120,7 @@ public class MeleeFighter : MonoBehaviour
 
         var animState = animator.GetNextAnimatorStateInfo(1);
 
-        yield return new WaitForSeconds(animState.length);
+        yield return new WaitForSeconds(animState.length * 0.8f);
         InAction = false;
     }
 }

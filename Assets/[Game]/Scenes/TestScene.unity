@@ -622,6 +622,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a7097ea9610c042963b0046a82bf3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 16140245240e22648b804a6f26c215f1, type: 2}
+  - {fileID: 11400000, guid: e482bfed1a11a9849ba73dad50369d27, type: 2}
+  - {fileID: 11400000, guid: 97c70fa4157de8c41802bcd0f21d3055, type: 2}
   sword: {fileID: 1888460642}
 --- !u!114 &1331520580
 MonoBehaviour:
@@ -1331,6 +1335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a7097ea9610c042963b0046a82bf3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attacks: []
   sword: {fileID: 0}
 --- !u!4 &1031632035033061298
 Transform:
