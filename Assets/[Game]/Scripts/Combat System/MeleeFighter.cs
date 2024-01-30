@@ -9,6 +9,7 @@ public class MeleeFighter : MonoBehaviour
     [SerializeField] List<AttackData> attacks;
     [SerializeField] GameObject sword;
     BoxCollider swordCollider;
+    SphereCollider leftHandCollider, rightHandCollider, leftFootCollider, rightFootCollider;
 
     Animator animator;
 
@@ -22,7 +23,13 @@ public class MeleeFighter : MonoBehaviour
         if(sword != null)
         {
             swordCollider = sword.GetComponent<BoxCollider>();
-            swordCollider.enabled = false;
+            leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand).GetComponent<SphereCollider>();
+            rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand).GetComponent<SphereCollider>();
+            leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<SphereCollider>();
+            rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<SphereCollider>();
+
+            DisableAllHitboxes();
+
         }
     }
 
@@ -67,7 +74,8 @@ public class MeleeFighter : MonoBehaviour
                 if(normalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
                     attackState = AttackState.Impact;
-                    swordCollider.enabled = true; // Enable collider
+                    EnableHitbox(attacks[comboCount]);
+                    //swordCollider.enabled = true; // Enable collider
                 }
             }
             else if(attackState == AttackState.Impact)
@@ -76,7 +84,8 @@ public class MeleeFighter : MonoBehaviour
                 if(normalizedTime >= attacks[comboCount].ImpactEndTime)
                 {
                     attackState = AttackState.Cooldown;
-                    swordCollider.enabled = false; // Disable collider
+                    DisableAllHitboxes();
+                    //swordCollider.enabled = false; // Disable collider
                 }
             }
             else if (attackState == AttackState.Cooldown)
@@ -122,5 +131,40 @@ public class MeleeFighter : MonoBehaviour
 
         yield return new WaitForSeconds(animState.length * 0.8f);
         InAction = false;
+    }
+
+    void EnableHitbox(AttackData attack)
+    {
+        switch (attack.HitboxToUse)
+        {
+            case AttackHitbox.LeftHand:
+                leftHandCollider.enabled = true;
+                break;
+            case AttackHitbox.RightHand:
+                rightHandCollider.enabled = true;
+                break;
+            case AttackHitbox.LeftFoot:
+                leftFootCollider.enabled = true;
+                break;
+            case AttackHitbox.RightFoot:
+                rightFootCollider.enabled = true;
+                break;
+            case AttackHitbox.Sword:
+                swordCollider.enabled = true;
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    void DisableAllHitboxes()
+    {
+
+        swordCollider.enabled = false;
+        leftHandCollider.enabled = false;
+        rightHandCollider.enabled = false;
+        leftFootCollider.enabled = false;
+        rightFootCollider.enabled = false;
     }
 }
